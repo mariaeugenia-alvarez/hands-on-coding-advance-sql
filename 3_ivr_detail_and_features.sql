@@ -40,5 +40,14 @@ LEFT JOIN keepcoding.ivr_steps stp
     AND mod.module_sequece = stp.module_sequece
 );
 
-
+--4. Generar el campo vdn_aggregation para cada llamada
+SELECT calls_ivr_id,
+       MAX(CASE WHEN STARTS_WITH(calls_vdn_label, 'ATC') THEN 'FRONT'
+                WHEN STARTS_WITH(calls_vdn_label, 'TECH') THEN 'TECH'
+                WHEN STARTS_WITH(calls_vdn_label, 'ABSORPTION') THEN 'ABSORPTION'
+                ELSE 'RESTO'
+       END) AS vdn_aggregation
+FROM keepcoding.ivr_detail
+GROUP BY calls_ivr_id
+ORDER BY calls_ivr_id;
 
