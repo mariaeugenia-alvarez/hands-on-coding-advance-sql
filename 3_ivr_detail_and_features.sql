@@ -40,6 +40,8 @@ LEFT JOIN keepcoding.ivr_steps stp
     AND mod.module_sequece = stp.module_sequece
 );
 
+
+
 --4. Generar el campo vdn_aggregation para cada llamada
 SELECT calls_ivr_id,
        MAX(CASE WHEN STARTS_WITH(calls_vdn_label, 'ATC') THEN 'FRONT'
@@ -51,3 +53,24 @@ FROM keepcoding.ivr_detail
 GROUP BY calls_ivr_id
 ORDER BY calls_ivr_id;
 
+
+
+--5. Generar los campos document_type y document_identification
+SELECT calls_ivr_id,
+        document_type,
+        document_identification
+FROM keepcoding.ivr_detail
+QUALIFY ROW_NUMBER() OVER(
+    PARTITION BY CAST(calls_ivr_id AS STRING)
+    ORDER BY 
+        CASE 
+            WHEN document_type NOT IN ('UNKNOWN', 'DESCONOCIDO') THEN 1
+            ELSE 2
+        END,
+        CASE 
+            WHEN document_identification NOT IN ('UNKNOWN') THEN 1
+            ELSE 2
+        END,
+        document_type,
+        document_identification
+) = 1
