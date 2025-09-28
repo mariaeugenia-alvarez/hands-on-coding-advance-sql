@@ -57,20 +57,56 @@ ORDER BY calls_ivr_id;
 
 --5. Generar los campos document_type y document_identification
 SELECT calls_ivr_id,
-        document_type,
-        document_identification
+       document_type,
+       document_identification
 FROM keepcoding.ivr_detail
 QUALIFY ROW_NUMBER() OVER(
     PARTITION BY CAST(calls_ivr_id AS STRING)
     ORDER BY 
         CASE 
-            WHEN document_type NOT IN ('UNKNOWN', 'DESCONOCIDO') THEN 1
-            ELSE 2
+            WHEN document_type IS NOT NULL AND document_type NOT IN ('UNKNOWN', 'DESCONOCIDO') THEN 1
+            WHEN document_type IS NOT NULL THEN 2
+            ELSE 3
         END,
         CASE 
-            WHEN document_identification NOT IN ('UNKNOWN') THEN 1
-            ELSE 2
+            WHEN document_identification IS NOT NULL AND document_identification NOT IN ('UNKNOWN') THEN 1
+            WHEN document_identification IS NOT NULL THEN 2
+            ELSE 3
         END,
         document_type,
         document_identification
-) = 1
+) = 1;
+
+
+
+--6. Generar el campo customer_phone
+SELECT calls_ivr_id,
+       customer_phone
+FROM keepcoding.ivr_detail
+QUALIFY ROW_NUMBER() OVER(
+    PARTITION BY CAST(calls_ivr_id AS STRING)
+    ORDER BY 
+        CASE 
+            WHEN customer_phone IS NOT NULL AND customer_phone NOT IN ('UNKNOWN') THEN 1
+            WHEN customer_phone IS NOT NULL THEN 2
+            ELSE 3
+        END,
+        customer_phone
+) = 1;
+
+
+
+--7. Generar el campo billing_account_id
+SELECT calls_ivr_id,
+       billing_account_id
+FROM keepcoding.ivr_detail
+QUALIFY ROW_NUMBER() OVER(
+    PARTITION BY CAST(calls_ivr_id AS STRING)
+    ORDER BY 
+        CASE 
+            WHEN billing_account_id IS NOT NULL AND billing_account_id NOT IN ('UNKNOWN') THEN 1
+            WHEN billing_account_id IS NOT NULL THEN 2
+            ELSE 3
+        END,
+        billing_account_id
+) = 1;
