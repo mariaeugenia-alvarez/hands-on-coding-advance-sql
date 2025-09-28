@@ -41,7 +41,6 @@ LEFT JOIN keepcoding.ivr_steps stp
 );
 
 
-
 --4. Generar el campo vdn_aggregation para cada llamada
 SELECT calls_ivr_id,
        MAX(CASE WHEN STARTS_WITH(calls_vdn_label, 'ATC') THEN 'FRONT'
@@ -52,7 +51,6 @@ SELECT calls_ivr_id,
 FROM keepcoding.ivr_detail
 GROUP BY calls_ivr_id
 ORDER BY calls_ivr_id;
-
 
 
 --5. Generar los campos document_type y document_identification
@@ -78,7 +76,6 @@ QUALIFY ROW_NUMBER() OVER(
 ) = 1;
 
 
-
 --6. Generar el campo customer_phone
 SELECT calls_ivr_id,
        customer_phone
@@ -93,7 +90,6 @@ QUALIFY ROW_NUMBER() OVER(
         END,
         customer_phone
 ) = 1;
-
 
 
 --7. Generar el campo billing_account_id
@@ -112,14 +108,12 @@ QUALIFY ROW_NUMBER() OVER(
 ) = 1;
 
 
-
 --8. Generar el campo masiva_lg
 SELECT calls_ivr_id,
        MAX(CASE WHEN module_name = 'AVERIA_MASIVA' THEN 1 ELSE 0 END) AS masiva_lg
 FROM keepcoding.ivr_detail
 GROUP BY calls_ivr_id
 ORDER BY calls_ivr_id;
-
 
 
 --9 y 10. Generar los campos info_by_phone_lg e info_by_dni_lg
@@ -129,7 +123,6 @@ SELECT calls_ivr_id,
 FROM keepcoding.ivr_detail
 GROUP BY calls_ivr_id
 ORDER BY calls_ivr_id;
-
 
 
 --11. Generar los campos repeated_phone_24H, cause_recall_phone_24H
