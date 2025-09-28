@@ -110,3 +110,22 @@ QUALIFY ROW_NUMBER() OVER(
         END,
         billing_account_id
 ) = 1;
+
+
+
+--8. Generar el campo masiva_lg
+SELECT calls_ivr_id,
+       MAX(CASE WHEN module_name = 'AVERIA_MASIVA' THEN 1 ELSE 0 END) AS masiva_lg
+FROM keepcoding.ivr_detail
+GROUP BY calls_ivr_id
+ORDER BY calls_ivr_id;
+
+
+
+--9 y 10. Generar los campos info_by_phone_lg e info_by_dni_lg
+SELECT calls_ivr_id,
+       MAX(CASE WHEN (step_name = 'CUSTOMERINFOBYPHONE.TX' AND step_result = 'OK') THEN 1 ELSE 0 END) AS info_by_phone_lg,
+       MAX(CASE WHEN (step_name = 'CUSTOMERINFOBYDNI.TX' AND step_result = 'OK') THEN 1 ELSE 0 END) AS info_by_dni_lg
+FROM keepcoding.ivr_detail
+GROUP BY calls_ivr_id
+ORDER BY calls_ivr_id;
