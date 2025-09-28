@@ -129,3 +129,25 @@ SELECT calls_ivr_id,
 FROM keepcoding.ivr_detail
 GROUP BY calls_ivr_id
 ORDER BY calls_ivr_id;
+
+
+
+--11. Generar los campos repeated_phone_24H, cause_recall_phone_24H
+WITH status_call AS(
+    SELECT calls_ivr_id,
+           calls_phone_number,
+           calls_start_date,
+           TIMESTAMP_ADD(calls_start_date, INTERVAL 24 HOUR) AS upp_limit_date,
+           TIMESTAMP_ADD(calls_start_date, INTERVAL -24 HOUR) AS inf_limit_date,
+           LEAD(calls_start_date) OVER(PARTITION BY calls_phone_number ORDER BY calls_start_date ASC) as next_call_date,
+           LAG(calls_start_date) OVER(PARTITION BY calls_phone_number ORDER BY calls_start_date ASC) as previous_call_date
+    FROM keepcoding.ivr_detail
+    GROUP BY calls_ivr_id, calls_phone_number, calls_start_date
+)
+SELECT calls_ivr_id,
+       MAX(calls_phone_number) AS calls_phone_number,
+       MAX(CASE WHEN next_call_date BETWEEN calls_start_date AND upp_limit_date THEN 1 ELSE 0 END) AS cause_recall_phone_24H,
+       MAX(CASE WHEN previous_call_date BETWEEN inf_limit_date AND calls_start_date THEN 1 ELSE 0 END) AS repeated_phone_24H
+FROM status_call
+GROUP BY calls_ivr_id
+ORDER BY calls_ivr_id;
