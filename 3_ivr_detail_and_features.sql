@@ -17,12 +17,10 @@ CREATE TABLE keepcoding.ivr_detail AS(
     call.ivr_language AS calls_ivr_language,
     call.steps_module AS calls_steps_module,
     call.module_aggregation AS calls_module_aggregation,
-
     mod.module_sequece,
     mod.module_name,
     mod.module_duration,
     mod.module_result,
-
     stp.step_sequence,
     stp.step_name,
     stp.step_result,
@@ -30,7 +28,7 @@ CREATE TABLE keepcoding.ivr_detail AS(
     stp.document_type,
     stp.document_identification,
     stp.customer_phone,
-    stp.billing_account_id,
+    stp.billing_account_id
 
 FROM keepcoding.ivr_calls call
 LEFT JOIN keepcoding.ivr_modules mod
