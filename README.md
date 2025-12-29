@@ -73,6 +73,8 @@ Cada ejercicio se entrega como archivo `.sql` independiente:
 
 ## Tecnologías y Técnicas Utilizadas
 
+📚 **[Ver resumen completo de tecnologías →](TECNOLOGIAS.md)**
+
 ### **Bases de Datos**
 - **PostgreSQL** - Sistema educativo y modelado relacional
 - **BigQuery** - Análisis de big data y funciones avanzadas
